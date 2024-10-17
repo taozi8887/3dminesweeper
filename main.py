@@ -38,12 +38,6 @@ def create_minesweeper_board(width, height, nm):
     return game_board
 
 
-game_board = create_minesweeper_board(width, height, nm)
-
-for i in game_board:
-    print(i)
-
-
 @app.route("/reset", methods=["POST"])
 def reset():
     global game_board, revealed, turn, gameover  # Ensure these are accessible globally
@@ -116,7 +110,15 @@ def gethtml(li, revealed):
 
 @app.route("/")
 def index():
+    global game_board, revealed, turn, gameover  # Ensure these are accessible globally
+    revealed = []  # Reset the revealed cells
+    turn = 0
+    gameover = False
     css = ""
+    game_board = create_minesweeper_board(width, height, nm)
+
+    for i in game_board:
+        print(i)
 
     html = gethtml(game_board, revealed)
     return render_template("index.html", css=css, html=html, gameover=gameover)
@@ -213,4 +215,4 @@ def handle_flag():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=8000)
