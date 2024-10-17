@@ -1,157 +1,155 @@
 body {
-  display: grid;
-  place-items: center;
-  height:100vh;
-  background: #feeac8;
+	display: grid;
+	place-items: center;
+	height: 100vh;
+	background: #feeac8;
 }
 
 .grid {
-  display: grid;
-  grid-template-rows: auto;
-  gap: 0px; /* Optional: adds space between the squares */
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+	display: grid;
+	grid-template-rows: auto;
+	gap: 0px;
+	/* Optional: adds space between the squares */
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 }
 
 body::-webkit-scrollbar {
-  display: none;
+	display: none;
 }
 
 *,
 *::before,
 *::after {
-  box-sizing: border-box;
-  user-select: none;
-  border: none;
-  outline: none;
+	box-sizing: border-box;
+	user-select: none;
+	border: none;
+	outline: none;
 }
 
 .surface {
-  width: 50px;
-  height: 50px;
+	width: 50px;
+	height: 50px;
 }
 
 .surface {
-  transform: rotateX(51deg) rotateZ(45deg);
-  transform-style: preserve-3d;
-  border-radius: 5px;
-  cursor: pointer;
-  box-shadow: 1px 1px 0 1px #ababab, -1px 0 28px 0 rgba(34, 33, 81, 0.01), 28px 28px 28px 0 rgba(34, 33, 81, 0.25);
-  transition: 0.2s ease-in-out transform, 0.2s ease-in-out box-shadow;
-  background-color: #d3e6ed;
+	transform: rotateX(51deg) rotateZ(45deg);
+	transform-style: preserve-3d;
+	border-radius: 5px;
+	cursor: pointer;
+	box-shadow: 1px 1px 0 1px #ababab, -1px 0 28px 0 rgba(34, 33, 81, 0.01), 28px 28px 28px 0 rgba(34, 33, 81, 0.25);
+	transition: 0.2s ease-in-out transform, 0.2s ease-in-out box-shadow;
+	background-color: #d3e6ed;
 }
+
 .surface:hover {
-  transform: translate3d(0px, -5px, 0px) rotateX(51deg) rotateZ(45deg);
-  box-shadow: 1px 1px 0 1px #ababab, -1px 0 28px 0 rgba(34, 33, 81, 0.01), 35px 35px 28px -10px rgba(34, 33, 81, 0.2);
+	transform: translate3d(0px, -5px, 0px) rotateX(51deg) rotateZ(45deg);
+	box-shadow: 1px 1px 0 1px #ababab, -1px 0 28px 0 rgba(34, 33, 81, 0.01), 35px 35px 28px -10px rgba(34, 33, 81, 0.2);
 }
 
 .row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .surface {
-  font-family: "JetBrains Mono", serif;
-  font-optical-sizing: auto;
-  font-weight: <weight>;
-  font-style: normal;
-  font-size: 20px;
-  margin: -10px 21px;
-  text-align: center;
-  border: 2px solid black;
-  transition: .2s ease-in-out all;
-  
+	font-family: "JetBrains Mono", serif;
+	font-optical-sizing: auto;
+	font-style: normal;
+	font-size: 20px;
+	margin: -10px 21px;
+	text-align: center;
+	border: 2px solid black;
+	transition: .2s ease-in-out all;
+
 }
 
 .surfacetext {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 }
 
 .empty {
-  background: #f5e6d3!important;
-  transform: translate3d(0px, 5px, 0px) rotateX(51deg) rotateZ(45deg)!important;
-  box-shadow: #9e8b6b 3px 3px 6px 0px inset, #f5e6d3 -3px -3px 6px 1px inset!important;
-  border: none;
-  cursor: default;
+	background: #f5e6d3 !important;
+	transform: translate3d(0px, 5px, 0px) rotateX(51deg) rotateZ(45deg) !important;
+	box-shadow: #9e8b6b 3px 3px 6px 0px inset, #f5e6d3 -3px -3px 6px 1px inset !important;
+	border: none;
+	cursor: default;
 }
 
 .flagged {
-  background: #e9998e;
+	background: #e9998e;
 }
 
 .mine {
-  background: #e9998e!important;
+	background: #e9998e !important;
 }
 
 .overlay {
-  font-family: "JetBrains Mono", serif;
-  font-optical-sizing: auto;
-  font-weight: <weight>;
-  font-style: normal;
-  position: fixed;
-  width: 100vw;
-  height: 1000vh;
-  background: rgb(161, 161, 161,0.5);
-  z-index: 999;
-  align-content: center;
-  display: none;
+	font-family: "JetBrains Mono", serif;
+	font-optical-sizing: auto;
+	font-style: normal;
+	position: fixed;
+	width: 100vw;
+	height: 1000vh;
+	background: rgb(161, 161, 161, 0.5);
+	z-index: 999;
+	align-content: center;
+	display: none;
 }
 
 .box {
-  width: max-content;
-  padding: 200px 100px;
-  margin-left: 100px;
-  background: white;
-  border-radius: 5px;
-  text-align: center;
-  margin: auto;
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
-  backdrop-filter: blur(6px);
-  background: rgba(255, 255, 255, 0.55);
+	width: max-content;
+	padding: 200px 100px;
+	margin-left: 100px;
+	background: white;
+	border-radius: 5px;
+	text-align: center;
+	margin: auto;
+	box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+	backdrop-filter: blur(6px);
+	background: rgba(255, 255, 255, 0.55);
 }
 
 button {
-  padding: 15px 25px;
-  font-family: "JetBrains Mono", serif;
-  font-optical-sizing: auto;
-  font-weight: <weight>;
-  font-style: normal;
-  background: white;
-  border: 2px solid black;
-  transition: 0.2s ease-in-out all;
-  cursor: pointer;
-  border-radius: 5px;
-  margin: auto;
+	padding: 15px 25px;
+	font-family: "JetBrains Mono", serif;
+	font-optical-sizing: auto;
+	font-style: normal;
+	background: white;
+	border: 2px solid black;
+	transition: 0.2s ease-in-out all;
+	cursor: pointer;
+	border-radius: 5px;
+	margin: auto;
 }
 
 .revealed {
-  background: #dcbaed;
+	background: #dcbaed;
 }
 
 button:hover {
-  background: black;
-  color: white;
+	background: black;
+	color: white;
 }
 
 .titlebox {
-  font-family: "JetBrains Mono", serif;
-  font-optical-sizing: auto;
-  font-weight: <weight>;
-  font-style: normal;
-  z-index: 9999;
-  
-  position: absolute;
-  top: 50px;
-  left: 50px;
-  padding: 50px;
-  border-radius: 20px;
-  backdrop-filter: blur(6px);
-  background: rgba(255, 255, 255, 0.55);
-  box-shadow: rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset, rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+	font-family: "JetBrains Mono", serif;
+	font-optical-sizing: auto;
+	font-style: normal;
+	z-index: 9999;
+
+	position: absolute;
+	top: 50px;
+	left: 50px;
+	padding: 50px;
+	border-radius: 20px;
+	backdrop-filter: blur(6px);
+	background: rgba(255, 255, 255, 0.55);
+	box-shadow: rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset, rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
 }

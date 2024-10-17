@@ -1,388 +1,388 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/index.css') }}">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
-  <title>MineSweeper</title>
-  <style>
-    {{css | safe}}
-  </style>
-</head>
-<body>
-  <div class="titlebox">
-    <h1>Minesweeper (3d-ish)</h1>
-    <p>Built by <a href="github.com/EdwardLuoJihan">me</a></p>
-    <p>Enjoy!</p>
-    <button onclick="resetGame(); location.reload()">Restart</button></div>
-  </div>
-  <div class="overlay" id="overlay">
-    <div class="box">
-    <h1 id='msg'>You Lost!</h1>
-    <button onclick="location.reload()">Play Again</button></div>
-    
-  </div>
-  <div class="grid" id="grid">
-    {{html | safe}}
-  </div>
-  <script>
-    window.addEventListener('wheel', function(event) {
-        event.preventDefault();
-    }, { passive: false });
-
-    
-    // Disable zoom on all devices
-    document.addEventListener('wheel', function(event) {
-      if (event.ctrlKey) {
-        event.preventDefault();
-      }
-    }, { passive: false });
-
-    document.addEventListener('keydown', function(event) {
-      if (event.ctrlKey && (event.key === '+' || event.key === '-' || event.key === '0')) {
-        event.preventDefault();
-      }
-    });
-    // Make the DIV element draggable:
-    dragElement(document.getElementById("grid"));
-
-    // Call the function to make the body draggable
-    dragBody();
-    let isDragging = false;
-
-    function dragElement(elmnt) {
-      var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-
-      // Move the DIV from anywhere inside the DIV:
-      elmnt.onmousedown = dragMouseDown;
-
-      function dragMouseDown(e) {
-        e = e || window.event;
-        e.preventDefault();
-        document.body.style.cursor = "grabbing";
-        isDragging = true;
-        // get the mouse cursor position at startup:
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-        document.onmouseup = closeDragElement;
-        // call a function whenever the cursor moves:
-        document.onmousemove = elementDrag;
-        
-      }
-
-      function elementDrag(e) {
-          e = e || window.event;
-          e.preventDefault();
-
-          // calculate the new cursor position:
-          pos1 = pos3 - e.clientX;
-          pos2 = pos4 - e.clientY;
-          pos3 = e.clientX;
-          pos4 = e.clientY;
-
-          // Get the current position and dimensions of the grid
-          const grid = elmnt;
-          const gridRect = grid.getBoundingClientRect();
-          const viewportWidth = window.innerWidth;
-          const viewportHeight = window.innerHeight;
-
-          // Calculate new position
-          let newTop = grid.offsetTop - pos2;
-          let newLeft = grid.offsetLeft - pos1;
-
-          // Ensure at least part of the grid is within the viewport
-          if (newTop + gridRect.height < 0) {
-              newTop = -gridRect.height + 1; // Allow the grid to be dragged slightly outside at the top
-          } else if (newTop > viewportHeight) {
-              newTop = viewportHeight - 1; // Allow the grid to be dragged slightly outside at the bottom
-          }
-
-          if (newLeft + gridRect.width < 0) {
-              newLeft = -gridRect.width + 1; // Allow the grid to be dragged slightly outside on the left
-          } else if (newLeft > viewportWidth) {
-              newLeft = viewportWidth - 1; // Allow the grid to be dragged slightly outside on the right
-          }
-
-          // Ensure at least part of the grid is visible in the viewport
-          if (newTop > 100) {
-              newTop = Math.max(0, newTop); // Limit to top if fully visible
-          } else if (newTop + gridRect.height < viewportHeight) {
-              newTop = Math.min(viewportHeight - gridRect.height, newTop); // Limit to bottom if fully visible
-          }
-
-          if (newLeft > 0) {
-              newLeft = Math.max(0, newLeft); // Limit to left if fully visible
-          } else if (newLeft + gridRect.width < viewportWidth) {
-              newLeft = Math.min(viewportWidth - gridRect.width, newLeft); // Limit to right if fully visible
-          }
-
-          // set the element's new position:
-          grid.style.top = newTop + "px";
-          grid.style.left = newLeft + "px";
-      }
-
-      function closeDragElement() {
-        // stop moving when mouse button is released:
-        document.onmouseup = null;
-        isDragging = false;
-        document.onmousemove = null;
-        document.body.style.cursor = "grab";
-      }
-    }
-
-    function dragBody() {
-      var body = document.body;
-      var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-
-      body.onmousedown = dragMouseDown;
-
-      function dragMouseDown(e) {
-        e = e || window.event;
-        e.preventDefault();
-        // get the mouse cursor position at startup:
-        document.body.style.cursor = "grabbing";
-        isDragging = true;
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-        document.onmouseup = closeDragElement;
-        // call a function whenever the cursor moves:
-        document.onmousemove = bodyDrag;
-      }
-
-      function bodyDrag(e) {
-        e = e || window.event;
-        e.preventDefault();
-        // calculate the new cursor position:
-        pos1 = pos3 - e.clientX;
-        pos2 = pos4 - e.clientY;
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-
-        // Get the current position and dimensions of the grid
-        const grid = document.getElementById("grid");
-        const gridRect = grid.getBoundingClientRect();
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
-
-        // Calculate new position
-        let newTop = grid.offsetTop - pos2;
-        let newLeft = grid.offsetLeft - pos1;
-
-        // Ensure at least part of the grid is within the viewport
-        if (newTop + gridRect.height < 0) {
-          newTop = -gridRect.height + 1; // Allow the grid to be dragged slightly outside at the top
-        } else if (newTop > viewportHeight) {
-          newTop = viewportHeight - 1; // Allow the grid to be dragged slightly outside at the bottom
-        }
-
-        if (newLeft + gridRect.width < 0) {
-          newLeft = -gridRect.width + 1; // Allow the grid to be dragged slightly outside on the left
-        } else if (newLeft > viewportWidth) {
-          newLeft = viewportWidth - 1; // Allow the grid to be dragged slightly outside on the right
-        }
-
-        // Ensure at least part of the grid is visible in the viewport
-        if (newTop > 0) {
-          newTop = Math.max(0, newTop); // Limit to top if fully visible
-        } else if (newTop + gridRect.height < viewportHeight) {
-          newTop = Math.min(viewportHeight - gridRect.height, newTop); // Limit to bottom if fully visible
-        }
-
-        if (newLeft > 0) {
-          newLeft = Math.max(0, newLeft); // Limit to left if fully visible
-        } else if (newLeft + gridRect.width < viewportWidth) {
-          newLeft = Math.min(viewportWidth - gridRect.width, newLeft); // Limit to right if fully visible
-        }
-
-        // set the grid's new position:
-        grid.style.top = newTop + "px";
-        grid.style.left = newLeft + "px";
-      }
-
-      function closeDragElement() {
-        // stop moving when mouse button is released:
-        document.onmouseup = null;
-        document.onmousemove = null;
-        document.body.style.cursor = "grab";
-        isDragging = false;
-      }
-    }
-
-    document.addEventListener('contextmenu', function(event) {
-        event.preventDefault();
-    });
-    document.querySelectorAll('.surface').forEach(function(surface) {
-        surface.addEventListener('contextmenu', function(event) {
-          console.log(isDragging)
-          if (!isDragging) {
-            const row = surface.getAttribute('data-row');
-            const col = surface.getAttribute('data-col');
-
-            // Determine whether to flag or unflag
-            const isFlagged = surface.classList.contains('flagged');
-
-            // Send the request to the backend to handle flagging
-            fetch('/handle_flag', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    row: row,
-                    col: col,
-                    flagged: !isFlagged  // If it's already flagged, we are unflagging, and vice versa
-                }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Toggle the 'flagged' class if the backend responds with success
-                    surface.classList.toggle('flagged');
-                  if (data.win) {
-                    document.getElementById('overlay').style.display = 'block';
-                    document.getElementById('msg').innerText = 'You Won!';
-                                                                  const gameBoard = data.game_board;
-
-                                                                   // Update the board based on revealed cells
-                                                                   data.revealed.forEach(cell => {
-                                                                       const [revealedRow, revealedCol] = cell;  // Unpack row and col
-                                                                       const revealedCell = document.querySelector(`.surface[data-row="${revealedRow}"][data-col="${revealedCol}"]`);
-                                                                       if (revealedCell) {
-                                                                           revealedCell.classList.add('revealed');  // Add a class for revealed styling
-                                                                           const cellValue = gameBoard[revealedRow][revealedCol];  // Get the value (0, 1, 2, M, etc.)
-                                                                         if (cellValue == 0) {
-                                                                           revealedCell.classList.add('empty');
-                                                                           revealedCell.innerHTML = `<span class="surfacetext"></span>`;
-                                                                         } else {
-                                                                           revealedCell.innerHTML = `<span class="surfacetext">${cellValue}</span>`;
-                                                                         }
-                                                                       }
-                                                                   });
-                    resetGame()
-                  }
-                  
-                } else {
-                    console.error('Error flagging/unflagging:', data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/index.css') }}">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+        <title>MineSweeper</title>
+        <style>
+            {{css | safe}}
+        </style>
+    </head>
+    <body>
+        <div class="titlebox">
+            <h1>Minesweeper (3d-ish)</h1>
+            <p>Built by <a href="github.com/EdwardLuoJihan">me</a></p>
+            <p>Enjoy!</p>
+            <button onclick="resetGame(); location.reload()">Restart</button>
+        </div>
+        </div>
+        <div class="overlay" id="overlay">
+            <div class="box">
+                <h1 id='msg'>You Lost!</h1>
+                <button onclick="location.reload()">Play Again</button>
+            </div>
+        </div>
+        <div class="grid" id="grid">
+            {{html | safe}}
+        </div>
+        <script>
+            window.addEventListener('wheel', function(event) {
+                event.preventDefault();
+            }, { passive: false });
+            
+            
+            // Disable zoom on all devices
+            document.addEventListener('wheel', function(event) {
+              if (event.ctrlKey) {
+                event.preventDefault();
+              }
+            }, { passive: false });
+            
+            document.addEventListener('keydown', function(event) {
+              if (event.ctrlKey && (event.key === '+' || event.key === '-' || event.key === '0')) {
+                event.preventDefault();
+              }
             });
-          }
-        });
-    });
-    document.addEventListener('DOMContentLoaded', function() {
-        // Get all elements with the class 'surface'
-        const surfaces = document.querySelectorAll('.surface');
-
-        // Attach click event listener to each .surface element
-        surfaces.forEach(function(surface) {
-            surface.addEventListener('click', function() {
-              if (!isDragging) {
-                // Get the cell coordinates (you'll need to encode the coordinates in the div attributes)
-                const row = surface.getAttribute('data-row');
-                const col = surface.getAttribute('data-col');
-
-              const isFlagged = surface.classList.contains('flagged');
-              
-
-               if (!isFlagged) {
-                 // Send a POST request to Flask with the row and column
-                 fetch('/handle_click', {
-                     method: 'POST',
-                     headers: {
-                         'Content-Type': 'application/json'
-                     },
-                     body: JSON.stringify({ row: row, col: col })
-                 })
-                 .then(response => response.json())
-                 .then(data => {
-                     // Update the board or handle the Minesweeper logic based on the response
-                     if (data.success) {
-                         const gameBoard = data.game_board;
-
-                         // Update the board based on revealed cells
-                         data.revealed.forEach(cell => {
-                             const [revealedRow, revealedCol] = cell;  // Unpack row and col
-                             const revealedCell = document.querySelector(`.surface[data-row="${revealedRow}"][data-col="${revealedCol}"]`);
-                             if (revealedCell) {
-                                 revealedCell.classList.add('revealed');  // Add a class for revealed styling
-                                 const cellValue = gameBoard[revealedRow][revealedCol];  // Get the value (0, 1, 2, M, etc.)
-                               if (cellValue == 0) {
-                                 revealedCell.classList.add('empty');
-                                 revealedCell.innerHTML = `<span class="surfacetext"></span>`;
-                               } else {
-                                 if(cellValue == "M") {
-                                   revealedCell.classList.add('mine');
+            // Make the DIV element draggable:
+            dragElement(document.getElementById("grid"));
+            
+            // Call the function to make the body draggable
+            dragBody();
+            let isDragging = false;
+            
+            function dragElement(elmnt) {
+              var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            
+              // Move the DIV from anywhere inside the DIV:
+              elmnt.onmousedown = dragMouseDown;
+            
+              function dragMouseDown(e) {
+                e = e || window.event;
+                e.preventDefault();
+                document.body.style.cursor = "grabbing";
+                isDragging = true;
+                // get the mouse cursor position at startup:
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                // call a function whenever the cursor moves:
+                document.onmousemove = elementDrag;
+                
+              }
+            
+              function elementDrag(e) {
+                  e = e || window.event;
+                  e.preventDefault();
+            
+                  // calculate the new cursor position:
+                  pos1 = pos3 - e.clientX;
+                  pos2 = pos4 - e.clientY;
+                  pos3 = e.clientX;
+                  pos4 = e.clientY;
+            
+                  // Get the current position and dimensions of the grid
+                  const grid = elmnt;
+                  const gridRect = grid.getBoundingClientRect();
+                  const viewportWidth = window.innerWidth;
+                  const viewportHeight = window.innerHeight;
+            
+                  // Calculate new position
+                  let newTop = grid.offsetTop - pos2;
+                  let newLeft = grid.offsetLeft - pos1;
+            
+                  // Ensure at least part of the grid is within the viewport
+                  if (newTop + gridRect.height < 0) {
+                      newTop = -gridRect.height + 1; // Allow the grid to be dragged slightly outside at the top
+                  } else if (newTop > viewportHeight) {
+                      newTop = viewportHeight - 1; // Allow the grid to be dragged slightly outside at the bottom
+                  }
+            
+                  if (newLeft + gridRect.width < 0) {
+                      newLeft = -gridRect.width + 1; // Allow the grid to be dragged slightly outside on the left
+                  } else if (newLeft > viewportWidth) {
+                      newLeft = viewportWidth - 1; // Allow the grid to be dragged slightly outside on the right
+                  }
+            
+                  // Ensure at least part of the grid is visible in the viewport
+                  if (newTop > 100) {
+                      newTop = Math.max(0, newTop); // Limit to top if fully visible
+                  } else if (newTop + gridRect.height < viewportHeight) {
+                      newTop = Math.min(viewportHeight - gridRect.height, newTop); // Limit to bottom if fully visible
+                  }
+            
+                  if (newLeft > 0) {
+                      newLeft = Math.max(0, newLeft); // Limit to left if fully visible
+                  } else if (newLeft + gridRect.width < viewportWidth) {
+                      newLeft = Math.min(viewportWidth - gridRect.width, newLeft); // Limit to right if fully visible
+                  }
+            
+                  // set the element's new position:
+                  grid.style.top = newTop + "px";
+                  grid.style.left = newLeft + "px";
+              }
+            
+              function closeDragElement() {
+                // stop moving when mouse button is released:
+                document.onmouseup = null;
+                isDragging = false;
+                document.onmousemove = null;
+                document.body.style.cursor = "grab";
+              }
+            }
+            
+            function dragBody() {
+              var body = document.body;
+              var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            
+              body.onmousedown = dragMouseDown;
+            
+              function dragMouseDown(e) {
+                e = e || window.event;
+                e.preventDefault();
+                // get the mouse cursor position at startup:
+                document.body.style.cursor = "grabbing";
+                isDragging = true;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                // call a function whenever the cursor moves:
+                document.onmousemove = bodyDrag;
+              }
+            
+              function bodyDrag(e) {
+                e = e || window.event;
+                e.preventDefault();
+                // calculate the new cursor position:
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+            
+                // Get the current position and dimensions of the grid
+                const grid = document.getElementById("grid");
+                const gridRect = grid.getBoundingClientRect();
+                const viewportWidth = window.innerWidth;
+                const viewportHeight = window.innerHeight;
+            
+                // Calculate new position
+                let newTop = grid.offsetTop - pos2;
+                let newLeft = grid.offsetLeft - pos1;
+            
+                // Ensure at least part of the grid is within the viewport
+                if (newTop + gridRect.height < 0) {
+                  newTop = -gridRect.height + 1; // Allow the grid to be dragged slightly outside at the top
+                } else if (newTop > viewportHeight) {
+                  newTop = viewportHeight - 1; // Allow the grid to be dragged slightly outside at the bottom
+                }
+            
+                if (newLeft + gridRect.width < 0) {
+                  newLeft = -gridRect.width + 1; // Allow the grid to be dragged slightly outside on the left
+                } else if (newLeft > viewportWidth) {
+                  newLeft = viewportWidth - 1; // Allow the grid to be dragged slightly outside on the right
+                }
+            
+                // Ensure at least part of the grid is visible in the viewport
+                if (newTop > 0) {
+                  newTop = Math.max(0, newTop); // Limit to top if fully visible
+                } else if (newTop + gridRect.height < viewportHeight) {
+                  newTop = Math.min(viewportHeight - gridRect.height, newTop); // Limit to bottom if fully visible
+                }
+            
+                if (newLeft > 0) {
+                  newLeft = Math.max(0, newLeft); // Limit to left if fully visible
+                } else if (newLeft + gridRect.width < viewportWidth) {
+                  newLeft = Math.min(viewportWidth - gridRect.width, newLeft); // Limit to right if fully visible
+                }
+            
+                // set the grid's new position:
+                grid.style.top = newTop + "px";
+                grid.style.left = newLeft + "px";
+              }
+            
+              function closeDragElement() {
+                // stop moving when mouse button is released:
+                document.onmouseup = null;
+                document.onmousemove = null;
+                document.body.style.cursor = "grab";
+                isDragging = false;
+              }
+            }
+            
+            document.addEventListener('contextmenu', function(event) {
+                event.preventDefault();
+            });
+            document.querySelectorAll('.surface').forEach(function(surface) {
+                surface.addEventListener('contextmenu', function(event) {
+                  console.log(isDragging)
+                  if (!isDragging) {
+                    const row = surface.getAttribute('data-row');
+                    const col = surface.getAttribute('data-col');
+            
+                    // Determine whether to flag or unflag
+                    const isFlagged = surface.classList.contains('flagged');
+            
+                    // Send the request to the backend to handle flagging
+                    fetch('/handle_flag', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            row: row,
+                            col: col,
+                            flagged: !isFlagged  // If it's already flagged, we are unflagging, and vice versa
+                        }),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Toggle the 'flagged' class if the backend responds with success
+                            surface.classList.toggle('flagged');
+                          if (data.win) {
+                            document.getElementById('overlay').style.display = 'block';
+                            document.getElementById('msg').innerText = 'You Won!';
+                           const gameBoard = data.game_board;
+            
+                           // Update the board based on revealed cells
+                           data.revealed.forEach(cell => {
+                               const [revealedRow, revealedCol] = cell;  // Unpack row and col
+                               const revealedCell = document.querySelector(`.surface[data-row="${revealedRow}"][data-col="${revealedCol}"]`);
+                               if (revealedCell) {
+                                   revealedCell.classList.add('revealed');  // Add a class for revealed styling
+                                   const cellValue = gameBoard[revealedRow][revealedCol];  // Get the value (0, 1, 2, M, etc.)
+                                 if (cellValue == 0) {
+                                   revealedCell.classList.add('empty');
+                                   revealedCell.innerHTML = `<span class="surfacetext"></span>`;
                                  } else {
-                                  revealedCell.innerHTML = `<span class="surfacetext">${cellValue}</span>`;}
+                                   revealedCell.innerHTML = `<span class="surfacetext">${cellValue}</span>`;
+                                 }
+                               }
+                           });
+                            resetGame()
+                          }
+                          
+                        } else {
+                            console.error('Error flagging/unflagging:', data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                  }
+                });
+            });
+            document.addEventListener('DOMContentLoaded', function() {
+                // Get all elements with the class 'surface'
+                const surfaces = document.querySelectorAll('.surface');
+            
+                // Attach click event listener to each .surface element
+                surfaces.forEach(function(surface) {
+                    surface.addEventListener('click', function() {
+                      if (!isDragging) {
+                        // Get the cell coordinates (you'll need to encode the coordinates in the div attributes)
+                        const row = surface.getAttribute('data-row');
+                        const col = surface.getAttribute('data-col');
+            
+                      const isFlagged = surface.classList.contains('flagged');
+                      
+            
+                       if (!isFlagged) {
+                         // Send a POST request to Flask with the row and column
+                         fetch('/handle_click', {
+                             method: 'POST',
+                             headers: {
+                                 'Content-Type': 'application/json'
+                             },
+                             body: JSON.stringify({ row: row, col: col })
+                         })
+                         .then(response => response.json())
+                         .then(data => {
+                             // Update the board or handle the Minesweeper logic based on the response
+                             if (data.success) {
+                                 const gameBoard = data.game_board;
+            
+                                 // Update the board based on revealed cells
+                                 data.revealed.forEach(cell => {
+                                     const [revealedRow, revealedCol] = cell;  // Unpack row and col
+                                     const revealedCell = document.querySelector(`.surface[data-row="${revealedRow}"][data-col="${revealedCol}"]`);
+                                     if (revealedCell) {
+                                         revealedCell.classList.add('revealed');  // Add a class for revealed styling
+                                         const cellValue = gameBoard[revealedRow][revealedCol];  // Get the value (0, 1, 2, M, etc.)
+                                       if (cellValue == 0) {
+                                         revealedCell.classList.add('empty');
+                                         revealedCell.innerHTML = `<span class="surfacetext"></span>`;
+                                       } else {
+                                         if(cellValue == "M") {
+                                           revealedCell.classList.add('mine');
+                                         } else {
+                                          revealedCell.innerHTML = `<span class="surfacetext">${cellValue}</span>`;}
+                                       }
+                                     }
+                                 });
+                             } else {
+                               if (data.gameover) {
+                                 document.getElementById('overlay').style.display = 'block';
+                                 document.getElementById('msg').innerText = 'You Lost!';
+                                 const gameBoard = data.game_board;
+            
+                                  // Update the board based on revealed cells
+                                  data.revealed.forEach(cell => {
+                                      const [revealedRow, revealedCol] = cell;  // Unpack row and col
+                                      const revealedCell = document.querySelector(`.surface[data-row="${revealedRow}"][data-col="${revealedCol}"]`);
+                                      if (revealedCell) {
+                                          revealedCell.classList.add('revealed');  // Add a class for revealed styling
+                                          const cellValue = gameBoard[revealedRow][revealedCol];  // Get the value (0, 1, 2, M, etc.)
+                                        if (cellValue == 0) {
+                                          revealedCell.classList.add('empty');
+                                          revealedCell.innerHTML = `<span class="surfacetext"></span>`;
+                                        } else {
+                                          if(cellValue == "M") {
+                                             revealedCell.classList.add('mine');
+                                            revealedCell.innerHTML = `<span class="surfacetext">${cellValue}</span>`;
+                                           } else {
+                                            revealedCell.innerHTML = `<span class="surfacetext">${cellValue}</span>`;}
+                                        }
+                                      }
+                                  });
+                                 resetGame()
                                }
                              }
+                         })
+                         .catch(error => {
+                             console.error("Request failed", error);
                          });
-                     } else {
-                       if (data.gameover) {
-                         document.getElementById('overlay').style.display = 'block';
-                         document.getElementById('msg').innerText = 'You Lost!';
-                         const gameBoard = data.game_board;
-
-                          // Update the board based on revealed cells
-                          data.revealed.forEach(cell => {
-                              const [revealedRow, revealedCol] = cell;  // Unpack row and col
-                              const revealedCell = document.querySelector(`.surface[data-row="${revealedRow}"][data-col="${revealedCol}"]`);
-                              if (revealedCell) {
-                                  revealedCell.classList.add('revealed');  // Add a class for revealed styling
-                                  const cellValue = gameBoard[revealedRow][revealedCol];  // Get the value (0, 1, 2, M, etc.)
-                                if (cellValue == 0) {
-                                  revealedCell.classList.add('empty');
-                                  revealedCell.innerHTML = `<span class="surfacetext"></span>`;
-                                } else {
-                                  if(cellValue == "M") {
-                                     revealedCell.classList.add('mine');
-                                    revealedCell.innerHTML = `<span class="surfacetext">${cellValue}</span>`;
-                                   } else {
-                                    revealedCell.innerHTML = `<span class="surfacetext">${cellValue}</span>`;}
-                                }
-                              }
-                          });
-                         resetGame()
                        }
-                     }
-                 })
-                 .catch(error => {
-                     console.error("Request failed", error);
-                 });
-               }
-              } });
-          
-        });
-    });
-    function resetGame() {
-        fetch('/reset', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Update the HTML with the new game state
-                document.querySelector('.game-board').innerHTML = data.html;
-                document.getElementById('game-message').innerText = ""; // Clear any game messages
-            } else {
-                console.error('Error resetting the game:', data.message);
+                      } });
+                  
+                });
+            });
+            function resetGame() {
+                fetch('/reset', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update the HTML with the new game state
+                        document.querySelector('.game-board').innerHTML = data.html;
+                        document.getElementById('game-message').innerText = ""; // Clear any game messages
+                    } else {
+                        console.error('Error resetting the game:', data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    }
-  </script>
-
-</body>
+        </script>
+    </body>
 </html>
