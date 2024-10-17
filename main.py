@@ -3,10 +3,10 @@ import random
 
 app = Flask(__name__)
 
-width, height = 16, 16
+width, height = 3,3
 revealed = []
 mine_locations = []
-nm = 40
+nm = 1
 flagged = []
 turn = 0
 gameover = False
@@ -14,6 +14,7 @@ gameover = False
 
 def create_minesweeper_board(width, height, nm):
     # Step 1: Initialize the board with empty cells (0 means no adjacent mines)
+    ml = []
     game_board = [[0 for _ in range(width)] for _ in range(height)]
 
     # Step 2: Place mines randomly on the board
@@ -26,7 +27,7 @@ def create_minesweeper_board(width, height, nm):
         # Only place a mine if the cell is not already a mine
         if game_board[row][col] != "M":
             game_board[row][col] = "M"
-            mine_locations.append((row, col))
+            ml.append((row, col))
             mine_count += 1
 
             # Step 3: Update adjacent cells' mine count
@@ -35,16 +36,17 @@ def create_minesweeper_board(width, height, nm):
                     if game_board[i][j] != "M":  # Don't update the mine itself
                         game_board[i][j] += 1
 
-    return game_board
+    return game_board, ml
 
 
 @app.route("/reset", methods=["POST"])
 def reset():
-    global game_board, revealed, turn, gameover  # Ensure these are accessible globally
+    global game_board, revealed, turn, gameover, flagged, mine_locations  # Ensure these are accessible globally
     revealed = []  # Reset the revealed cells
     turn = 0
+    flagged = []
     gameover = False
-    game_board = create_minesweeper_board(width, height, nm)  # Recreate the game board
+    game_board, mine_locations = create_minesweeper_board(width, height, nm)  # Recreate the game board
 
     css = ""
     html = gethtml(game_board, revealed)  # Get the new HTML representation
@@ -96,10 +98,12 @@ def gethtml(li, revealed):
             if lst[item] == -1:
                 html += f'        <div style="opacity: 0;visibility: hidden;" class="surface"></div>\n'
             elif item in revealed:
+                a = 'g' if lst[item] == 1 else 'y' if lst[item] == 2 else 'r' if lst[item] > 2 else ''
+                print(a)
                 if lst[item] == 0:
                     html += f'        <div class="surface empty revealed" data-row="{row}" data-col="{col}"><span class="surfacetext"></span></div>\n'
                 else:
-                    html += f'        <div class="surface revealed" data-row="{row}" data-col="{col}"><span class="surfacetext">{lst[item]}</span></div>\n'
+                    html += f'        <div class="surface revealed {a}" data-row="{row}" data-col="{col}"><span class="surfacetext">{lst[item]}</span></div>\n'
             else:
                 html += f'        <div class="surface" data-row="{row}" data-col="{col}"><span class="surfacetext"></span></div>\n'
 
@@ -110,12 +114,13 @@ def gethtml(li, revealed):
 
 @app.route("/")
 def index():
-    global game_board, revealed, turn, gameover  # Ensure these are accessible globally
+    global game_board, revealed, turn, gameover, flagged, mine_locations  # Ensure these are accessible globally
     revealed = []  # Reset the revealed cells
+    flagged = []
     turn = 0
     gameover = False
     css = ""
-    game_board = create_minesweeper_board(width, height, nm)
+    game_board, mine_locations = create_minesweeper_board(width, height, nm)
 
     for i in game_board:
         print(i)
@@ -196,12 +201,9 @@ def handle_flag():
     col = int(data["col"])
     f = data["flagged"]  # True if flagging, False if unflagging
 
-    print(row, col, f)
-
 
     # Check if the cell is valid for flagging
     if (row, col) in revealed:
-        print("in")
         return jsonify(success=False, message="Cannot flag a revealed cell")
 
     # Update the flagged state of the cell
@@ -212,6 +214,9 @@ def handle_flag():
 
     if sorted(flagged) == sorted(mine_locations):
         gameover = True
+        for r in range(height):
+                for c in range(width):
+                    revealed.append((r, c))  # Add all cells to the revealed list
         return jsonify(success=True, win=True, revealed=revealed, game_board=game_board)
 
     return jsonify(success=True)

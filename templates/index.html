@@ -32,6 +32,17 @@
             {{html | safe}}
         </div>
         <script>
+
+document.addEventListener('DOMContentLoaded', () => {
+    const surfaces = document.querySelectorAll('.surface');
+    
+    surfaces.forEach((surface, index) => {
+        setTimeout(() => {
+          surface.style.transform = 'translate3d(0, 0, 0) rotateX(51deg) rotateZ(45deg)';
+            surface.style.opacity = 1; // Reveal the surface
+        }, index * 10); // Adjust the timing as needed (500ms per element)
+    });
+});
             window.addEventListener('wheel', function(event) {
                 event.preventDefault();
             }, { passive: false });
@@ -260,6 +271,13 @@
                                    revealedCell.classList.add('empty');
                                    revealedCell.innerHTML = `<span class="surfacetext"></span>`;
                                  } else {
+                                  if(cellValue == 1) {
+                                            revealedCell.classList.add('g');
+                                          } if(cellValue == 2) {
+                                            revealedCell.classList.add('y');
+                                          }  if(cellValue > 2) {
+                                            revealedCell.classList.add('r');
+                                          }
                                    revealedCell.innerHTML = `<span class="surfacetext">${cellValue}</span>`;
                                  }
                                }
@@ -321,7 +339,17 @@
                                          if(cellValue == "M") {
                                            revealedCell.classList.add('mine');
                                          } else {
-                                          revealedCell.innerHTML = `<span class="surfacetext">${cellValue}</span>`;}
+
+                                          if(cellValue == 1) {
+                                            revealedCell.classList.add('g');
+                                          } if(cellValue == 2) {
+                                            revealedCell.classList.add('y');
+                                          }  if(cellValue > 2) {
+                                            revealedCell.classList.add('r');
+                                          }
+                                          
+                                          revealedCell.innerHTML = `<span class="surfacetext">${cellValue}</span>`;
+                                        }
                                        }
                                      }
                                  });
@@ -346,6 +374,13 @@
                                              revealedCell.classList.add('mine');
                                             revealedCell.innerHTML = `<span class="surfacetext">${cellValue}</span>`;
                                            } else {
+                                            if(cellValue == 1) {
+                                            revealedCell.classList.add('g');
+                                          } if(cellValue == 2) {
+                                            revealedCell.classList.add('y');
+                                          }  if(cellValue > 2) {
+                                            revealedCell.classList.add('r');
+                                          }
                                             revealedCell.innerHTML = `<span class="surfacetext">${cellValue}</span>`;}
                                         }
                                       }

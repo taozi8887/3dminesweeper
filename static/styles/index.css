@@ -41,11 +41,11 @@ body::-webkit-scrollbar {
 	cursor: pointer;
 	box-shadow: 1px 1px 0 1px #ababab, -1px 0 28px 0 rgba(34, 33, 81, 0.01), 28px 28px 28px 0 rgba(34, 33, 81, 0.25);
 	transition: 0.2s ease-in-out transform, 0.2s ease-in-out box-shadow;
-	background-color: #d3e6ed;
+	background-color: #aee8f0;
 }
 
 .surface:hover {
-	transform: translate3d(0px, -5px, 0px) rotateX(51deg) rotateZ(45deg);
+	transform: translate3d(0px, -5px, 0px) rotateX(51deg) rotateZ(45deg)!important;
 	box-shadow: 1px 1px 0 1px #ababab, -1px 0 28px 0 rgba(34, 33, 81, 0.01), 35px 35px 28px -10px rgba(34, 33, 81, 0.2);
 }
 
@@ -62,8 +62,10 @@ body::-webkit-scrollbar {
 	font-size: 20px;
 	margin: -10px 21px;
 	text-align: center;
-	border: 2px solid black;
+	border: 1px solid black;
+	transform: translate3d(0, 10px, 0) rotateX(51deg) rotateZ(45deg);
 	transition: .2s ease-in-out all;
+	opacity: 0; /* Start hidden */
 
 }
 
@@ -129,8 +131,17 @@ button {
 	margin: auto;
 }
 
-.revealed {
-	background: #dcbaed;
+.g {
+	background: #b7f5a0!important;
+}
+
+.y {
+	background: #fcf8ae!important;
+}
+
+.r {
+	background: #ef175b!important;
+	color: white;
 }
 
 button:hover {
