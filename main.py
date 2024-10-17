@@ -196,6 +196,9 @@ def handle_flag():
     col = int(data["col"])
     f = data["flagged"]  # True if flagging, False if unflagging
 
+    print(row, col, f)
+
+
     # Check if the cell is valid for flagging
     if (row, col) in revealed:
         print("in")
@@ -208,8 +211,8 @@ def handle_flag():
         flagged.remove((row, col))  # Remove the cell from the flagged set
 
     if sorted(flagged) == sorted(mine_locations):
-        return jsonify(success=True, win=True, revealed=revealed, game_board=game_board)
         gameover = True
+        return jsonify(success=True, win=True, revealed=revealed, game_board=game_board)
 
     return jsonify(success=True)
 
