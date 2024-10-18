@@ -76,14 +76,6 @@ body::-webkit-scrollbar {
 	transform: translate(-50%, -50%);
 }
 
-.empty {
-	background: #f5e6d3 !important;
-	transform: translate3d(0px, 5px, 0px) rotateX(51deg) rotateZ(45deg) !important;
-	box-shadow: #9e8b6b 3px 3px 6px 0px inset, #f5e6d3 -3px -3px 6px 1px inset !important;
-	border: none;
-	cursor: default;
-}
-
 .flagged {
 	background: #e9998e;
 }
@@ -108,14 +100,17 @@ body::-webkit-scrollbar {
 .box {
 	width: max-content;
 	padding: 200px 100px;
-	margin-left: 100px;
 	background: white;
 	border-radius: 20px;
 	text-align: center;
-	margin: auto;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 	box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
 	backdrop-filter: blur(6px);
 	background: rgba(255, 255, 255, 0.55);
+	z-index: 999999999999;
 }
 
 button {
@@ -153,7 +148,7 @@ button:hover {
 	font-family: "JetBrains Mono", serif;
 	font-optical-sizing: auto;
 	font-style: normal;
-	z-index: 9999;
+	z-index: 2;
 
 	position: absolute;
 	top: 50px;
@@ -163,4 +158,67 @@ button:hover {
 	backdrop-filter: blur(6px);
 	background: rgba(255, 255, 255, 0.55);
 	box-shadow: rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset, rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+}
+
+.empty {
+	background: #f5e6d3 !important;
+	transform: translate3d(0px, 5px, 0px) rotateX(51deg) rotateZ(45deg) !important;
+	box-shadow: #9e8b6b 3px 3px 6px 0px inset, #f5e6d3 -3px -3px 6px 1px inset !important;
+	border: none;
+	cursor: default;
+}
+
+a {
+	color: black;
+}
+
+.empty:hover {
+	transform: translate3d(0px, 5px, 0px) rotateX(51deg) rotateZ(45deg) !important;
+}
+
+.settingsbox {
+	font-family: "JetBrains Mono", serif;
+	font-optical-sizing: auto;
+	font-style: normal;
+	z-index: 2;
+
+	position: absolute;
+	top: 50px;
+	right: 50px;
+	padding: 50px;
+	border-radius: 20px;
+	backdrop-filter: blur(6px);
+	background: rgba(255, 255, 255, 0.55);
+	box-shadow: rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset, rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+}
+
+.statsbox {
+	font-family: "JetBrains Mono", serif;
+	font-optical-sizing: auto;
+	font-style: normal;
+	z-index: 2;
+	color: black;
+
+	position: absolute;
+	top: 50px;
+	left: 517px;
+	padding: 50px;
+	border-radius: 20px;
+	backdrop-filter: blur(6px);
+	background: rgba(255, 255, 255, 0.55);
+	box-shadow: rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset, rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+}
+
+#time {
+	background: black;
+	padding: 0px 5px;
+	border-radius: 7px;
+	color: white;
+}
+
+#t {
+	background: black;
+	padding: 0px 5px;
+	border-radius: 7px;
+	color: white;
 }

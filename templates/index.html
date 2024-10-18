@@ -9,31 +9,285 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
-        <title>MineSweeper</title>
+        <title>3d-ish MineSweeper</title>
         <style>
             {{css | safe}}
         </style>
     </head>
     <body>
+      <div class="statsbox">
+        🚩 <span id="flags">{{flagged}}</span>/<span id="total">{{totalflags}}</span><br><br>
+        ⏲️ <span id="time">0</span> s
+      </div>
+      <div class="settingsbox">
+        Choose Level: <br><br>
+        <button id="tutorial-btn" onclick="setLevel(0)">Tutorial</button><br><br>
+        <button id="beginner-btn" onclick="setLevel(1)">Beginner</button><br><br>
+        <button id="intermediate-btn" onclick="setLevel(2)">Intermediate</button><br><br>
+        <button id="expert-btn" onclick="setLevel(3)">Expert</button>
+      </div>
         <div class="titlebox">
-            <h1>Minesweeper (3d-ish)</h1>
-            <p>Built by <a href="github.com/EdwardLuoJihan">me</a></p>
+            <h1>3D-ish Minesweeper</h1>
+            <p>Built by <a href="github.com/EdwardLuoJihan" target="_blank">me</a></p>
             <p>Enjoy!</p>
-            <button onclick="resetGame(); location.reload()">Restart</button>
+            <button onclick="resetGame(); location.reload(); resetTimer(); startTimer();">Restart</button><br><br>
+            <a href="https://minesweepergame.com/strategy/how-to-play-minesweeper.php" target="_blank">How to play?</a>
         </div>
         </div>
         <div class="overlay" id="overlay">
             <div class="box">
                 <h1 id='msg'>You Lost!</h1>
-                <button onclick="location.reload()">Play Again</button>
+                <p id="timetaken"></p>
+                <button onclick="resetGame(); location.reload(); resetTimer(); startTimer();">Play Again</button>
             </div>
         </div>
         <div class="grid" id="grid">
             {{html | safe}}
         </div>
         <script>
+          let timer; // Variable to store the timer
+let elapsedTime = parseInt(localStorage.getItem('elapsedTime')) || 0; // Track elapsed time in seconds, default to 0 if not set
+let timerRunning = false; // Flag to track if the timer is running
+
+// Function to start the timer
+function startTimer() {
+    if (!timerRunning) { // Only start if the timer is not already running
+        timerRunning = true; // Set the flag to true
+        timer = setInterval(() => {
+            elapsedTime++; // Increment the elapsed time
+            localStorage.setItem('elapsedTime', elapsedTime); // Store elapsed time in localStorage
+            document.getElementById("time").textContent = elapsedTime; // Update the time display
+        }, 1000); // Update every second
+    }
+}
+
+// Function to stop the timer
+function stopTimer() {
+    clearInterval(timer); // Stop the timer
+    timerRunning = false; // Reset the flag
+}
+
+// Load elapsed time from localStorage on page load
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("time").textContent = elapsedTime; // Display stored time
+    startTimer(); // Start the timer
+});
+
+// Call this function to reset the timer when starting a new game
+function resetTimer() {
+    stopTimer(); // Stop the current timer
+    elapsedTime = 0; // Reset elapsed time
+    localStorage.removeItem('elapsedTime'); // Clear elapsed time from localStorage
+    document.getElementById("time").textContent = elapsedTime; // Update the display
+}
+
+
+          function setLevel(level) {
+        fetch("/set_level", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ level: level })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+              resetTimer();
+              startTimer();
+                document.getElementById("grid").innerHTML = data.html;
+                document.getElementById('flags').innerText = data.flags;
+                document.getElementById('total').innerText = data.nm;
+            
+                // Attach click event listener to each .surface element
+                document.querySelectorAll('.surface').forEach(function(surface) {
+                    surface.addEventListener('click', function() {
+                      if (!isDragging) {
+                        // Get the cell coordinates (you'll need to encode the coordinates in the div attributes)
+                        const row = surface.getAttribute('data-row');
+                        const col = surface.getAttribute('data-col');
+            
+                      const isFlagged = surface.classList.contains('flagged');
+                      
+            
+                       if (!isFlagged) {
+                         // Send a POST request to Flask with the row and column
+                         fetch('/handle_click', {
+                             method: 'POST',
+                             headers: {
+                                 'Content-Type': 'application/json'
+                             },
+                             body: JSON.stringify({ row: row, col: col })
+                         })
+                         .then(response => response.json())
+                         .then(data => {
+                             // Update the board or handle the Minesweeper logic based on the response
+                             if (data.success) {
+                                 const gameBoard = data.game_board;
+            
+                                 // Update the board based on revealed cells
+                                 data.revealed.forEach(cell => {
+                                     const [revealedRow, revealedCol] = cell;  // Unpack row and col
+                                     const revealedCell = document.querySelector(`.surface[data-row="${revealedRow}"][data-col="${revealedCol}"]`);
+                                     if (revealedCell) {
+                                         revealedCell.classList.add('revealed');  // Add a class for revealed styling
+                                         const cellValue = gameBoard[revealedRow][revealedCol];  // Get the value (0, 1, 2, M, etc.)
+                                       if (cellValue == 0) {
+                                         revealedCell.classList.add('empty');
+                                         revealedCell.innerHTML = `<span class="surfacetext"></span>`;
+                                       } else {
+                                         if(cellValue == "M") {
+                                           revealedCell.classList.add('mine');
+                                         } else {
+
+                                          if(cellValue == 1) {
+                                            revealedCell.classList.add('g');
+                                          } if(cellValue == 2) {
+                                            revealedCell.classList.add('y');
+                                          }  if(cellValue > 2) {
+                                            revealedCell.classList.add('r');
+                                          }
+                                          
+                                          revealedCell.innerHTML = `<span class="surfacetext">${cellValue}</span>`;
+                                        }
+                                       }
+                                     }
+                                 });
+                             } else {
+                               if (data.gameover) {
+                                 document.getElementById('overlay').style.display = 'block';
+                                 document.getElementById('msg').innerText = 'You Lost!';
+                                 const gameBoard = data.game_board;
+            
+                                  // Update the board based on revealed cells
+                                  data.revealed.forEach(cell => {
+                                      const [revealedRow, revealedCol] = cell;  // Unpack row and col
+                                      const revealedCell = document.querySelector(`.surface[data-row="${revealedRow}"][data-col="${revealedCol}"]`);
+                                      if (revealedCell) {
+                                          revealedCell.classList.add('revealed');  // Add a class for revealed styling
+                                          const cellValue = gameBoard[revealedRow][revealedCol];  // Get the value (0, 1, 2, M, etc.)
+                                        if (cellValue == 0) {
+                                          revealedCell.classList.add('empty');
+                                          revealedCell.innerHTML = `<span class="surfacetext"></span>`;
+                                        } else {
+                                          if(cellValue == "M") {
+                                             revealedCell.classList.add('mine');
+                                            revealedCell.innerHTML = `<span class="surfacetext">${cellValue}</span>`;
+                                           } else {
+                                            if(cellValue == 1) {
+                                            revealedCell.classList.add('g');
+                                          } if(cellValue == 2) {
+                                            revealedCell.classList.add('y');
+                                          }  if(cellValue > 2) {
+                                            revealedCell.classList.add('r');
+                                          }
+                                            revealedCell.innerHTML = `<span class="surfacetext">${cellValue}</span>`;}
+                                        }
+                                      }
+                                  });
+                                 resetGame()
+                               }
+                             }
+                         })
+                         .catch(error => {
+                             console.error("Request failed", error);
+                         });
+                       }
+                      } });
+                  
+                });
+                document.querySelectorAll('.surface').forEach(function(surface) {
+                surface.addEventListener('contextmenu', function(event) {
+                  if (!isDragging) {
+                    const row = surface.getAttribute('data-row');
+                    const col = surface.getAttribute('data-col');
+            
+                    // Determine whether to flag or unflag
+                    const isFlagged = surface.classList.contains('flagged');
+            
+                    // Send the request to the backend to handle flagging
+                    fetch('/handle_flag', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            row: row,
+                            col: col,
+                            flagged: isFlagged  // If it's already flagged, we are unflagging, and vice versa
+                        }),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            document.getElementById('flags').innerText = data.flags;
+                            document.getElementById('total').innerText = data.nm;
+                            // Toggle the 'flagged' class if the backend responds with success
+                            if(data.state) {
+                              surface.classList.add('flagged');
+                            } else {
+                              surface.classList.remove('flagged');
+                            }
+                          if (data.win) {
+                            document.getElementById('overlay').style.display = 'block';
+                            document.getElementById('msg').innerText = 'You Won!';
+                           const gameBoard = data.game_board;
+            
+                           // Update the board based on revealed cells
+                           data.revealed.forEach(cell => {
+                               const [revealedRow, revealedCol] = cell;  // Unpack row and col
+                               const revealedCell = document.querySelector(`.surface[data-row="${revealedRow}"][data-col="${revealedCol}"]`);
+                               if (revealedCell) {
+                                   revealedCell.classList.add('revealed');  // Add a class for revealed styling
+                                   const cellValue = gameBoard[revealedRow][revealedCol];  // Get the value (0, 1, 2, M, etc.)
+                                 if (cellValue == 0) {
+                                   revealedCell.classList.add('empty');
+                                   revealedCell.innerHTML = `<span class="surfacetext"></span>`;
+                                 } else {
+                                  if(cellValue == 'M') {
+                                    revealedCell.classList.add('mine');
+                                  }
+                                  if(cellValue == 1) {
+                                            revealedCell.classList.add('g');
+                                          } if(cellValue == 2) {
+                                            revealedCell.classList.add('y');
+                                          }  if(cellValue > 2) {
+                                            revealedCell.classList.add('r');
+                                          }
+                                   revealedCell.innerHTML = `<span class="surfacetext">${cellValue}</span>`;
+                                 }
+                               }
+                           });
+                            resetGame()
+                          }
+                          
+                        } else {
+                            console.error('Error flagging/unflagging:', data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                  }
+                });
+            });
+                const surfaces = document.querySelectorAll('.surface');
+                
+    
+    surfaces.forEach((surface, index) => {
+        setTimeout(() => {
+          surface.style.transform = 'translate3d(0, 0, 0) rotateX(51deg) rotateZ(45deg)';
+            surface.style.opacity = 1; // Reveal the surface
+        }, index * 10); // Adjust the timing as needed (500ms per element)
+    });
+
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
 
 document.addEventListener('DOMContentLoaded', () => {
+  startTimer();
     const surfaces = document.querySelectorAll('.surface');
     
     surfaces.forEach((surface, index) => {
@@ -230,7 +484,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             document.querySelectorAll('.surface').forEach(function(surface) {
                 surface.addEventListener('contextmenu', function(event) {
-                  console.log(isDragging)
+            
                   if (!isDragging) {
                     const row = surface.getAttribute('data-row');
                     const col = surface.getAttribute('data-col');
@@ -247,17 +501,25 @@ document.addEventListener('DOMContentLoaded', () => {
                         body: JSON.stringify({
                             row: row,
                             col: col,
-                            flagged: !isFlagged  // If it's already flagged, we are unflagging, and vice versa
+                            flagged: isFlagged  // If it's already flagged, we are unflagging, and vice versa
                         }),
                     })
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
+                            document.getElementById('flags').innerText = data.flags;
+                            document.getElementById('total').innerText = data.nm;
                             // Toggle the 'flagged' class if the backend responds with success
-                            surface.classList.toggle('flagged');
+                            if(data.state) {
+                              surface.classList.add('flagged');
+                            } else {
+                              surface.classList.remove('flagged');
+                            }
                           if (data.win) {
                             document.getElementById('overlay').style.display = 'block';
                             document.getElementById('msg').innerText = 'You Won!';
+                            stopTimer();
+                            document.getElementById('timetaken').innerHTML = `Time Taken: <span id='t'>${elapsedTime}</span> s <br><br>`;
                            const gameBoard = data.game_board;
             
                            // Update the board based on revealed cells
@@ -271,6 +533,9 @@ document.addEventListener('DOMContentLoaded', () => {
                                    revealedCell.classList.add('empty');
                                    revealedCell.innerHTML = `<span class="surfacetext"></span>`;
                                  } else {
+                                  if(cellValue == 'M') {
+                                    revealedCell.classList.add('mine');
+                                  }
                                   if(cellValue == 1) {
                                             revealedCell.classList.add('g');
                                           } if(cellValue == 2) {
