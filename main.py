@@ -125,6 +125,9 @@ def handle_click():
                     revealed.append((r, c))
             session['game_data']['gameover'] = True
             session['game_data']['revealed'] = revealed
+            level = session['game_data']['level']
+            initialize_game(level)
+            
             return jsonify(success=False, gameover=True, revealed=revealed, game_board=game_board)
     else:
         if (row, col) not in revealed:
@@ -165,7 +168,10 @@ def handle_flag():
             for c in range(game_data['width']):
                 game_data['revealed'].append((r, c))
         session['game_data']['revealed'] = game_data['revealed']
-        return jsonify(success=True, win=True, revealed=game_data['revealed'], game_board=game_data['game_board'], nm=totalflags, flags=flags)
+        trev, tb = game_data['revealed'], game_data['game_board']
+        level = session['game_data']['level']
+        initialize_game(level)
+        return jsonify(success=True, win=True, revealed=trev, game_board=tb, nm=totalflags, flags=flags)
 
     return jsonify(success=True, state=state, nm=totalflags, flags=flags)
 
@@ -203,7 +209,10 @@ def gethtml(li, revealed):
             elif item in flagged:
                 html += f'        <div class="surface flagged" data-row="{row}" data-col="{col}"><span class="surfacetext"></span></div>\n'
             elif item in revealed:
-                a = 'g' if lst[item] == 1 else 'y' if lst[item] == 2 else 'r' if lst[item] > 2 else ''
+                if lst[item] == 'M':
+                    a = 'mine'
+                else:
+                    a = 'g' if lst[item] == 1 else 'y' if lst[item] == 2 else 'r' if lst[item] > 2 else ''
                 if lst[item] == 0:
                     html += f'        <div class="surface empty revealed" data-row="{row}" data-col="{col}"><span class="surfacetext"></span></div>\n'
                 else:

@@ -91,8 +91,8 @@ body::-webkit-scrollbar {
 	position: fixed;
 	width: 100vw;
 	height: 1000vh;
-	background: rgb(161, 161, 161, 0.5);
-	z-index: 999;
+	background: rgb(161, 161, 161, 0.2);
+	z-index: 4;
 	align-content: center;
 	display: none;
 }
@@ -110,7 +110,7 @@ body::-webkit-scrollbar {
 	box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
 	backdrop-filter: blur(6px);
 	background: rgba(255, 255, 255, 0.55);
-	z-index: 999999999999;
+	z-index: 6;
 }
 
 button {
@@ -149,6 +149,7 @@ button:hover {
 	font-optical-sizing: auto;
 	font-style: normal;
 	z-index: 2;
+	display: none;
 
 	position: absolute;
 	top: 50px;
@@ -180,6 +181,7 @@ a {
 	font-family: "JetBrains Mono", serif;
 	font-optical-sizing: auto;
 	font-style: normal;
+	display: none;
 	z-index: 2;
 
 	position: absolute;
@@ -221,4 +223,101 @@ a {
 	padding: 0px 5px;
 	border-radius: 7px;
 	color: white;
+}
+
+.helppopup {
+	font-family: "JetBrains Mono", serif;
+	font-optical-sizing: auto;
+	font-style: normal;
+	z-index: 2;
+	color: black;
+	width: 50px;
+	height: 50px;
+	border-radius: 99999px;
+	position: absolute;
+	bottom: 50px;
+	left: 50px;
+	align-items: center;
+	text-align: center;
+	justify-content: center;
+	backdrop-filter: blur(6px);
+	background: rgba(255, 255, 255, 0.55);
+	transition: all 0.2s ease-in-out;
+	cursor: pointer;
+	box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+}
+
+.helppopup:hover {
+	background: #6b5f49;
+	color: #feeac8;
+}
+
+.helppopup p {
+	position: absolute;
+	margin: 0;
+	left: 50%;
+	top: 50%;
+	text-align: center;
+	transform: translate(-50%, -50%);
+}
+
+.popup-overlay {
+	font-family: "JetBrains Mono", serif;
+	font-optical-sizing: auto;
+	font-style: normal;
+	z-index: 3;
+	color: black;
+
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	padding: 50px;
+	border-radius: 20px;
+	backdrop-filter: blur(6px);
+	background: rgba(255, 255, 255, .7);
+	box-shadow: rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset, rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+}
+
+.minimize {
+	font-family: "JetBrains Mono", serif;
+	font-optical-sizing: auto;
+	font-style: normal;
+	z-index: 4;
+	border: none;
+	color: black;
+	width: 50px;
+	height: 50px;
+	border-radius: 99999px;
+	position: absolute;
+	top: 25px;
+	right: 25px;
+	align-items: center;
+	text-align: center;
+	justify-content: center;
+	backdrop-filter: blur(6px);
+	background: rgba(255, 255, 255, 0.55);
+	transition: all 0.2s ease-in-out;
+	cursor: pointer;
+	box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+}
+
+.minimize:hover {
+	background: #6b5f49;
+	color: #feeac8;
+}
+
+.minimize p {
+	position: absolute;
+	margin: 0;
+	left: 50%;
+	top: 50%;
+	text-align: center;
+	transform: translate(-50%, -50%);
+}
+
+#minimize-btn2 {
+	top: 25px;
+	left: 25px!important;
+	margin: 0!important;
 }
