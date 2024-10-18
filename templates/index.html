@@ -51,14 +51,14 @@
           <h1>3D-ish Minesweeper</h1>
           <p>Built by <a href="https://github.com/EdwardLuoJihan" target="_blank">me</a></p>
           <p>Enjoy!</p>
-          <button onclick="resetGame(); location.reload(); resetTimer();">Restart</button><br><br>
+          <button onclick="resetGame();">Restart</button><br><br>
           <a href="https://minesweepergame.com/strategy/how-to-play-minesweeper.php" target="_blank">How to play minesweeper?</a>
       </div>
         <div class="overlay" id="overlay">
             <div class="box">
                 <h1 id='msg'>You Lost!</h1>
                 <p id="timetaken"></p>
-                <button onclick="resetGame(); location.reload(); resetTimer();">Play Again</button>
+                <button onclick="resetGame();">Play Again</button>
             </div>
         </div>
         <div class="grid" id="grid">
@@ -896,7 +896,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 });
             });
+
+
+
+
+
+
             function resetGame() {
+              console.log('reset called')
                 fetch('/reset', {
                     method: 'POST',
                     headers: {
@@ -911,6 +918,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else {
                         console.error('Error resetting the game:');
                     }
+                    location.reload();
+                    resetTimer();
                 })
                 .catch(error => {
                     console.error('Error:', error);

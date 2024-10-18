@@ -77,6 +77,7 @@ def clean():
 @app.route("/reset", methods=["POST"])
 def reset():
     level = session['game_data']['level']
+    old = session['game_data']['game_board']
     initialize_game(level)
     game_data = session['game_data']
     html = gethtml(game_data['game_board'], game_data['revealed'])
@@ -91,13 +92,10 @@ def reveal_adjacent_squares(row, col, revealed):
     if (row, col) in revealed:
         return revealed
     if (row, col) not in game_data['flagged']:
-        print("NOT IN")
         revealed.append((row, col))
     if game_board[row][col] != 0:
         return revealed
-    print(game_board[row][col])
     session['game_data']['revealed'] = revealed
-    print(revealed)
 
     reveal_adjacent_squares(row - 1, col, revealed)  # Up
     reveal_adjacent_squares(row + 1, col, revealed)  # Down
@@ -109,6 +107,7 @@ def handle_click():
     game_data = session['game_data']
     game_board = game_data['game_board']
     revealed = game_data['revealed']
+    flagged = game_data['flagged']
     turn = game_data['turn']
     
     data = request.get_json()
@@ -117,15 +116,48 @@ def handle_click():
 
     if game_board[row][col] == "M":
         if turn == 0:
-            game_board, mine_locations = create_minesweeper_board(game_data['width'], game_data['height'], game_data['nm'])
-            session['game_data']['game_board'] = game_board
-            session['game_data']['mine_locations'] = mine_locations
-            revealed = []
-            flagged = []
-            session['game_data']['flagged'] = flagged
+            level = session['game_data']['level']
+            if count_adjacent_zeros(session['game_data']['game_board'], row, col) < level+3 or session['game_data']['game_board'][row][col] != 0:
+                level = game_data['level']
+                width, height = levels[level][0]
+                nm = levels[level][1]
+                game_board, mine_locations = create_minesweeper_board(width, height, nm)
+                
+                session['game_data'] = {
+                    'width': width,
+                    'height': height,
+                    'nm': nm,
+                    'game_board': game_board,
+                    'revealed': [],
+                    'mine_locations': mine_locations,
+                    'flagged': flagged,
+                    'turn': 1,
+                    'gameover': False,
+                    'level': level
+                }
+                while count_adjacent_zeros(session['game_data']['game_board'], row, col) < level+3 and session['game_data']['game_board'][row][col] != 0:
+                    level = game_data['level']
+                    print(count_adjacent_zeros(session['game_data']['game_board'], row, col) < level+3)
+                    width, height = levels[level][0]
+                    nm = levels[level][1]
+                    game_board, mine_locations = create_minesweeper_board(width, height, nm)
+                    
+                    session['game_data'] = {
+                        'width': width,
+                        'height': height,
+                        'nm': nm,
+                        'game_board': game_board,
+                        'revealed': [],
+                        'mine_locations': mine_locations,
+                        'flagged': flagged,
+                        'turn': 1,
+                        'gameover': False,
+                        'level': level
+                    }
+            if (row, col) not in revealed:
+                session['game_data']['turn'] += 1
             reveal_adjacent_squares(row, col, revealed)
-            session['game_data']['revealed'] = revealed
-            return jsonify(success=True, revealed=revealed, game_board=game_board)
+            return jsonify(success=True, revealed=session['game_data']['revealed'], game_board=session['game_data']['game_board'])
         else:
             for r in range(game_data['height']):
                 for c in range(game_data['width']):
@@ -138,17 +170,74 @@ def handle_click():
             return jsonify(success=False, gameover=True, revealed=revealed, game_board=game_board)
     else:
         flagged = session['game_data']['flagged']
-        print(flagged)
+        if turn == 0:
+            level = session['game_data']['level']
+            if count_adjacent_zeros(session['game_data']['game_board'], row, col) < level+3 or session['game_data']['game_board'][row][col] != 0:
+                level = game_data['level']
+                width, height = levels[level][0]
+                nm = levels[level][1]
+                game_board, mine_locations = create_minesweeper_board(width, height, nm)
+                
+                session['game_data'] = {
+                    'width': width,
+                    'height': height,
+                    'nm': nm,
+                    'game_board': game_board,
+                    'revealed': [],
+                    'mine_locations': mine_locations,
+                    'flagged': flagged,
+                    'turn': 1,
+                    'gameover': False,
+                    'level': level
+                }
+                while count_adjacent_zeros(session['game_data']['game_board'], row, col) < level+3 and session['game_data']['game_board'][row][col] != 0:
+                    level = game_data['level']
+                    width, height = levels[level][0]
+                    nm = levels[level][1]
+                    game_board, mine_locations = create_minesweeper_board(width, height, nm)
+                    
+                    session['game_data'] = {
+                        'width': width,
+                        'height': height,
+                        'nm': nm,
+                        'game_board': game_board,
+                        'revealed': [],
+                        'mine_locations': mine_locations,
+                        'flagged': flagged,
+                        'turn': 1,
+                        'gameover': False,
+                        'level': level
+                    }
         if (row, col) not in revealed:
             session['game_data']['turn'] += 1
-        reveal_adjacent_squares(row, col, revealed)
-        return jsonify(success=True, revealed=revealed, game_board=game_board)
+        reveal_adjacent_squares(row, col, session['game_data']['revealed'])
+        return jsonify(success=True, revealed=session['game_data']['revealed'], game_board=session['game_data']['game_board'])
+
+def dfs(grid, x, y):
+    # Check for out-of-bounds and whether the cell is 0
+    if x < 0 or x >= len(grid) or y < 0 or y >= len(grid[0]) or grid[x][y] != 0:
+        return 0
+    
+    # Mark the cell as visited
+    grid[x][y] = -1  # Mark as visited (you can also use a separate visited set)
+    
+    # Count this cell
+    size = 1
+    
+    for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+        size += dfs(grid, x + dx, y + dy)
+    
+    return size
+
+def count_adjacent_zeros(grid1, x, y):
+    grid = [row[:] for row in grid1]
+    return dfs(grid, x, y)
+
 
 @app.route("/handle_flag", methods=["POST"])
 def handle_flag():
     game_data = session['game_data']
     flagged = game_data['flagged']
-    print(flagged)
     mine_locations = game_data['mine_locations']
     totalflags = game_data['nm']  # Total mines (flags)
     
@@ -168,7 +257,6 @@ def handle_flag():
         state = False
 
     session['game_data']['flagged'] = flagged
-    print(session['game_data']['flagged'], len(session['game_data']['flagged']))
     flags = len(set(flagged))  # Number of currently flagged squares
 
     # Check for win condition (all mines flagged)
