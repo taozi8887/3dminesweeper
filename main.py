@@ -85,14 +85,19 @@ def reset():
 def reveal_adjacent_squares(row, col, revealed):
     game_data = session['game_data']
     game_board = game_data['game_board']
+    revealed = game_data['revealed']
     if row < 0 or row >= len(game_board) or col < 0 or col >= len(game_board[0]):
         return revealed
     if (row, col) in revealed:
         return revealed
     if (row, col) not in game_data['flagged']:
+        print("NOT IN")
         revealed.append((row, col))
     if game_board[row][col] != 0:
         return revealed
+    print(game_board[row][col])
+    session['game_data']['revealed'] = revealed
+    print(revealed)
 
     reveal_adjacent_squares(row - 1, col, revealed)  # Up
     reveal_adjacent_squares(row + 1, col, revealed)  # Down
@@ -116,6 +121,8 @@ def handle_click():
             session['game_data']['game_board'] = game_board
             session['game_data']['mine_locations'] = mine_locations
             revealed = []
+            flagged = []
+            session['game_data']['flagged'] = flagged
             reveal_adjacent_squares(row, col, revealed)
             session['game_data']['revealed'] = revealed
             return jsonify(success=True, revealed=revealed, game_board=game_board)
@@ -130,16 +137,18 @@ def handle_click():
             
             return jsonify(success=False, gameover=True, revealed=revealed, game_board=game_board)
     else:
+        flagged = session['game_data']['flagged']
+        print(flagged)
         if (row, col) not in revealed:
             session['game_data']['turn'] += 1
         reveal_adjacent_squares(row, col, revealed)
-        session['game_data']['revealed'] = revealed
         return jsonify(success=True, revealed=revealed, game_board=game_board)
 
 @app.route("/handle_flag", methods=["POST"])
 def handle_flag():
     game_data = session['game_data']
     flagged = game_data['flagged']
+    print(flagged)
     mine_locations = game_data['mine_locations']
     totalflags = game_data['nm']  # Total mines (flags)
     
@@ -159,6 +168,7 @@ def handle_flag():
         state = False
 
     session['game_data']['flagged'] = flagged
+    print(session['game_data']['flagged'], len(session['game_data']['flagged']))
     flags = len(set(flagged))  # Number of currently flagged squares
 
     # Check for win condition (all mines flagged)
