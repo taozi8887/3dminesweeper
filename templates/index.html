@@ -69,12 +69,14 @@
 
 // Function to track the hovered cell
 function handleMouseOverCell(event) {
+
     const cell = event.target; 
     const row = cell.getAttribute("data-row");
     const col = cell.getAttribute("data-col");
     if (row && col) {
         hoveredCell = { row, col };
     }
+    console.log(hoveredCell)
 }
 
 // Function to clear the hovered cell when the mouse leaves
@@ -170,15 +172,6 @@ function sendFlagRequest(row, col, flagged, surface) {
     .catch(error => console.error('Error:', error));
 }
 
-// Event listeners for mouseover and mouseout on the cells
-document.querySelectorAll('.surface').forEach(cell => {
-    cell.addEventListener('mouseover', handleMouseOverCell);
-    cell.addEventListener('mouseout', handleMouseOutCell);
-});
-
-// Event listener for the "F" key press
-document.addEventListener('keydown', handleFlagKey);
-
           // Function to toggle settings box
 function toggleSettings() {
     const settingsBox = document.getElementById("settings-box");
@@ -217,6 +210,14 @@ function toggleSettings2() {
 
 // On page load, check if settings were minimized or not
 document.addEventListener("DOMContentLoaded", function() {
+  // Event listeners for mouseover and mouseout on the cells
+document.querySelectorAll('.surface').forEach(cell => {
+    cell.addEventListener('mouseover', handleMouseOverCell);
+    cell.addEventListener('mouseout', handleMouseOutCell);
+});
+
+// Event listener for the "F" key press
+document.addEventListener('keydown', handleFlagKey);
     const settingsMinimized = localStorage.getItem("settingsMinimized");
     const settingsContent = document.getElementById("settings-box");
     const minimizeBtn = document.getElementById("minimize-btn");
@@ -305,15 +306,15 @@ function resetTimer() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
+              let hoveredCell = null;
               resetTimer();
+              console.log(hoveredCell)
               // Event listeners for mouseover and mouseout on the cells
-document.querySelectorAll('.surface').forEach(cell => {
-    cell.addEventListener('mouseover', handleMouseOverCell);
-    cell.addEventListener('mouseout', handleMouseOutCell);
-});
+              console.log('attempting to add mouseovermouseout')
+          
 
-// Event listener for the "F" key press
-document.addEventListener('keydown', handleFlagKey);
+              // Event listener for the "F" key press
+              document.addEventListener('keydown', handleFlagKey);
               
                 document.getElementById("grid").innerHTML = data.html;
                 document.getElementById('flags').innerText = data.flags;
@@ -419,6 +420,11 @@ document.addEventListener('keydown', handleFlagKey);
                       } });
 
                 });
+                document.querySelectorAll('.surface').forEach(cell => {
+                console.log(cell)
+                  cell.addEventListener('mouseover', handleMouseOverCell);
+                  cell.addEventListener('mouseout', handleMouseOutCell);
+              });
                 document.querySelectorAll('.surface').forEach(function(surface) {
                 surface.addEventListener('contextmenu', function(event) {
                   startTimer();
