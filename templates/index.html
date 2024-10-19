@@ -31,6 +31,9 @@
       <div class="helppopup" id="helppopup">
         <p>?</p>
     </div>
+    <div class="bugpopup" id="bugpopup">
+      <p>👾</p>
+  </div>
     <!-- Hidden popup with game tips -->
     <div class="popup-overlay" id="popup-overlay" style="display: none;">
       <div class="popup-content">
@@ -45,6 +48,13 @@
               <li>Reloading the page will pause the timer until you make the next move.</li>
           </ul>
           <button id="closePopup">Close</button>
+      </div>
+    </div>
+    <div class="popup-overlay" id="bug-overlay" style="display: none;">
+      <div class="popup-content">
+          <h2>Please report any bugs you find to inlowik@gmail.com!</h2>
+          <p>Any and all reports or welcome, and you can also email to suggest changes or ideas you may have!</p>
+          <button id="closePopup2">Close</button>
       </div>
     </div>
       <div class="titlebox" id="title-box">
@@ -257,6 +267,21 @@ document.getElementById("helppopup").addEventListener("click", function () {
 // Close the help popup when the close button is clicked
 document.getElementById("closePopup").addEventListener("click", function () {
     document.getElementById("popup-overlay").style.display = "none";
+});
+
+// Toggle the help popup
+document.getElementById("bugpopup").addEventListener("click", function () {
+    const popupOverlay = document.getElementById("bug-overlay");
+    if (popupOverlay.style.display === "none" || popupOverlay.style.display === "") {
+        popupOverlay.style.display = "flex"; // Show popup
+    } else {
+        popupOverlay.style.display = "none"; // Hide popup
+    }
+});
+
+// Close the help popup when the close button is clicked
+document.getElementById("closePopup2").addEventListener("click", function () {
+    document.getElementById("bug-overlay").style.display = "none";
 });
 
           let timer; // Variable to store the timer

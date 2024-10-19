@@ -135,25 +135,28 @@ def handle_click():
                     'gameover': False,
                     'level': level
                 }
-                while count_adjacent_zeros(session['game_data']['game_board'], row, col) < level+3 and session['game_data']['game_board'][row][col] != 0:
-                    level = game_data['level']
-                    print(count_adjacent_zeros(session['game_data']['game_board'], row, col) < level+3)
-                    width, height = levels[level][0]
-                    nm = levels[level][1]
-                    game_board, mine_locations = create_minesweeper_board(width, height, nm)
-                    
-                    session['game_data'] = {
-                        'width': width,
-                        'height': height,
-                        'nm': nm,
-                        'game_board': game_board,
-                        'revealed': [],
-                        'mine_locations': mine_locations,
-                        'flagged': flagged,
-                        'turn': 1,
-                        'gameover': False,
-                        'level': level
-                    }
+                while 1:
+                    if count_adjacent_zeros(session['game_data']['game_board'], row, col) > level+3 and session['game_data']['game_board'][row][col] == 0:
+                        print(count_adjacent_zeros(session['game_data']['game_board'], row, col))
+                        break
+                    else:
+                        level = game_data['level']
+                        width, height = levels[level][0]
+                        nm = levels[level][1]
+                        game_board, mine_locations = create_minesweeper_board(width, height, nm)
+                        
+                        session['game_data'] = {
+                            'width': width,
+                            'height': height,
+                            'nm': nm,
+                            'game_board': game_board,
+                            'revealed': [],
+                            'mine_locations': mine_locations,
+                            'flagged': flagged,
+                            'turn': 1,
+                            'gameover': False,
+                            'level': level
+                        }
             if (row, col) not in revealed:
                 session['game_data']['turn'] += 1
             reveal_adjacent_squares(row, col, revealed)
@@ -190,24 +193,28 @@ def handle_click():
                     'gameover': False,
                     'level': level
                 }
-                while count_adjacent_zeros(session['game_data']['game_board'], row, col) < level+3 and session['game_data']['game_board'][row][col] != 0:
-                    level = game_data['level']
-                    width, height = levels[level][0]
-                    nm = levels[level][1]
-                    game_board, mine_locations = create_minesweeper_board(width, height, nm)
-                    
-                    session['game_data'] = {
-                        'width': width,
-                        'height': height,
-                        'nm': nm,
-                        'game_board': game_board,
-                        'revealed': [],
-                        'mine_locations': mine_locations,
-                        'flagged': flagged,
-                        'turn': 1,
-                        'gameover': False,
-                        'level': level
-                    }
+                while 1:
+                    if count_adjacent_zeros(session['game_data']['game_board'], row, col) > level+3 and session['game_data']['game_board'][row][col] == 0:
+                        print(count_adjacent_zeros(session['game_data']['game_board'], row, col))
+                        break
+                    else:
+                        level = game_data['level']
+                        width, height = levels[level][0]
+                        nm = levels[level][1]
+                        game_board, mine_locations = create_minesweeper_board(width, height, nm)
+                        
+                        session['game_data'] = {
+                            'width': width,
+                            'height': height,
+                            'nm': nm,
+                            'game_board': game_board,
+                            'revealed': [],
+                            'mine_locations': mine_locations,
+                            'flagged': flagged,
+                            'turn': 1,
+                            'gameover': False,
+                            'level': level
+                        }
         if (row, col) not in revealed:
             session['game_data']['turn'] += 1
         reveal_adjacent_squares(row, col, session['game_data']['revealed'])
