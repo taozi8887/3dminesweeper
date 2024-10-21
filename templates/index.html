@@ -17,7 +17,8 @@
     <body>
       <div class="statsbox" id="statsbox">
         🚩 <span id="flags">{{flagged}}</span>/<span id="total">{{totalflags}}</span><br><br>
-        ⏲️ <span id="time">0</span> s
+        ⏲️ <span id="time">0</span> s <br><br><br>
+        <button id="togglemode">Dark Mode</button>
       </div>
       <button id="minimize-btn" class="minimize" onclick="toggleSettings()"><p>-</p></button>
       <button id="minimize-btn2" class="minimize" onclick="toggleSettings2()"><p>-</p></button>
@@ -75,6 +76,54 @@
             {{html | safe}}
         </div>
         <script>
+            const toggleButton = document.getElementById('togglemode');
+
+// Function to update the button text
+function updateButtonText() {
+    if (document.body.classList.contains('darkmode')) {
+        toggleButton.textContent = '🌞';
+    } else {
+        toggleButton.textContent = '🌙';
+    }
+}
+
+// Function to toggle dark mode and save preference
+function toggleDarkMode() {
+    document.body.classList.toggle('darkmode');
+    updateButtonText();
+
+    // Apply dark mode class to all specified elements
+    const elements = document.querySelectorAll('.surface, .flagged, .empty, .g, .y, .r, .mine, button, #time, #t, .minimize, .helppopup, .bugpopup');
+    elements.forEach(element => {
+        element.classList.toggle('darkmode');
+    });
+
+    // Save preference to local storage
+    if (document.body.classList.contains('darkmode')) {
+        localStorage.setItem('darkmode', 'enabled');
+    } else {
+        localStorage.removeItem('darkmode');
+    }
+}
+
+// Add event listener to the button
+toggleButton.addEventListener('click', toggleDarkMode);
+
+// Check local storage for dark mode preference on page load
+if (localStorage.getItem('darkmode') === 'enabled') {
+    document.body.classList.add('darkmode');
+    // Apply dark mode class to specified elements
+    const elements = document.querySelectorAll('.surface, .flagged, .empty, .g, .y, .r, .mine, button, #time, #t, .minimize, .helppopup, .bugpopup');
+    elements.forEach(element => {
+        element.classList.add('darkmode');
+    });
+}
+
+// Initialize button text based on current mode
+updateButtonText();
+
+
+
           let hoveredCell = null; // Variable to track the hovered cell
 
 // Function to track the hovered cell

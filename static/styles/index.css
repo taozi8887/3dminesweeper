@@ -166,6 +166,7 @@ button:hover {
 	transform: translate3d(0px, 5px, 0px) rotateX(51deg) rotateZ(45deg) !important;
 	box-shadow: #9e8b6b 3px 3px 6px 0px inset, #f5e6d3 -3px -3px 6px 1px inset !important;
 	border: none;
+	transform: translate3d(0px, 5px, 0px) rotateX(51deg) rotateZ(45deg) !important;
 	cursor: default;
 }
 
@@ -357,72 +358,116 @@ a {
 	text-align: center;
 	transform: translate(-50%, -50%);
 }
-/*
-body {
-	display: grid;
-	place-items: center;
-	height: 100vh;
+
+body.darkmode {
 	background: #0D0D0D; 
 }
 
-.surface {
-	width: 50px;
-	height: 50px;
-	background-color: #00FFC6; 
-	transform: rotateX(51deg) rotateZ(45deg);
-	transform-style: preserve-3d;
-	border-radius: 5px;
-	cursor: pointer;
-	box-shadow: 1px 1px 0 1px #808080, -1px 0 28px 0 rgba(34, 33, 81, 0.01), 28px 28px 28px 0 rgba(34, 33, 81, 0.25);
-	transition: 0.2s ease-in-out transform, 0.2s ease-in-out box-shadow;
+.surface.darkmode {
+	background-color: #00FFC6!important; 
+	box-shadow: 1px 1px 0 1px #00ffaa, -1px 0 28px 0 rgba(34, 33, 81, 0.01), 28px 28px 28px 0 #00ffc852;
 }
 
-.empty {
-	background: #1E1E1E !important; 
-	transform: translate3d(0px, 5px, 0px) rotateX(51deg) rotateZ(45deg) !important;
-	box-shadow: #808080 3px 3px 6px 0px inset, #1E1E1E -3px -3px 6px 1px inset !important;
+.surface.darkmode:hover {
+	box-shadow: 1px 1px 0 1px #00ffaa, -1px 0 28px 0 rgba(34, 33, 81, 0.01), 35px 35px 28px -10px #00ffc852;
+}
+
+.flagged.darkmode {
+	box-shadow: 1px 1px 0 1px #ff4b81, -1px 0 28px 0 rgba(34, 33, 81, 0.01), 28px 28px 28px 0 #ff6c988f;
+}
+
+.flagged.darkmode:hover {
+	box-shadow: 1px 1px 0 1px #ff4b81, -1px 0 28px 0 rgba(34, 33, 81, 0.01), 35px 35px 28px -10px #ff6c988f;
+}
+
+.empty.darkmode {
+	background: #252525!important; 
 	border: none;
+	transform: translate3d(0px, 5px, 0px) rotateX(51deg) rotateZ(45deg) !important;
 	cursor: default;
+	box-shadow: #1a1a1a 3px 3px 6px 0px inset, #252525 -3px -3px 6px 1px inset!important;
 }
 
-.g {
+.g.darkmode {
 	background: #00FF85!important;
 }
 
-.y {
+.y.darkmode {
 	background: #FFFB00!important;
+	box-shadow: 1px 1px 0 1px #FFFB00, -1px 0 28px 0 rgba(34, 33, 81, 0.01), 28px 28px 28px 0 #fffb0067;
 }
 
-.r {
-	background: #FF007C!important; 
+.y.darkmode:hover {
+	box-shadow: 1px 1px 0 1px #FFFB00, -1px 0 28px 0 rgba(34, 33, 81, 0.01), 35px 35px 28px -10px #fffb0067;
+}
+
+.r.darkmode {
+	background: #FF007C!important;
 	color: white;
+	box-shadow: 1px 1px 0 1px #FF007C, -1px 0 28px 0 rgba(34, 33, 81, 0.01), 28px 28px 28px 0 #ff007b73;
 }
 
-.mine {
+.r.darkmode:hover {
+	box-shadow: 1px 1px 0 1px #FF007C, -1px 0 28px 0 rgba(34, 33, 81, 0.01), 35px 35px 28px -10px #ff007b73;
+}
+
+.mine.darkmode {
+	background: #FF004D !important; 
+	box-shadow: 1px 1px 0 1px #FF004D, -1px 0 28px 0 rgba(34, 33, 81, 0.01), 28px 28px 28px 0 #ff004c70;
+}
+
+.flagged.darkmode {
 	background: #FF004D !important; 
 }
 
-.flagged {
-	background: #FF004D !important; 
-}
-
-button {
-	background: #1E1E1E;
-	border: 2px solid #00FFC6;
-	color: white;
+button.darkmode {
+	background: #1E1E1E!important;
+	border: 2px solid #00FFC6!important;
+	color: white!important;
 	transition: 0.2s ease-in-out all;
 	cursor: pointer;
 }
 
-button:hover {
-	background: #00FFC6;
-	color: black;
+button.darkmode:hover {
+	background: #00FFC6!important;
+	color: black!important;
 }
 
-#time, #t {
-	background: black;
+#time.darkmode, #t.darkmode {
+	background: black!important;
 	padding: 0px 5px;
 	border-radius: 7px;
-	color: white;
+	color: #00FFC6;
 }
-*/
+
+.minimize.darkmode {
+	width: 50px!important;
+	border-radius: 50%!important;
+	padding: 0;
+}
+
+.helppopup.darkmode {
+	background: #1E1E1E!important;
+	border: 2px solid #00FFC6!important;
+	color: white!important;
+	transition: 0.2s ease-in-out all;
+	cursor: pointer;
+}
+
+.helppopup.darkmode:hover {
+	background: #00FFC6!important;
+	color: black!important;
+}
+
+.bugpopup.darkmode {
+	background: #1E1E1E!important;
+	border: 2px solid #00FFC6!important;
+	color: white!important;
+	transition: 0.2s ease-in-out all;
+	cursor: pointer;
+}
+
+.bugpopup.darkmode:hover {
+	background: #00FFC6!important;
+	color: black!important;
+}
