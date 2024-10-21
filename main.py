@@ -331,7 +331,10 @@ def gethtml(li, revealed):
 @app.route("/set_level", methods=["POST"])
 def set_level():
     data = request.get_json()
-    level = data["level"]
+    if data['level'] == -1:
+        level = session['game_data']['level']
+    else:
+        level = data["level"]
 
     # Update session with the new level and game parameters
     session['game_data'] = {
