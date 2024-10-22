@@ -393,6 +393,18 @@ function resetTimer() {
                 document.getElementById("grid").innerHTML = data.html;
                 document.getElementById('flags').innerText = data.flags;
                 document.getElementById('total').innerText = data.nm;
+                // Check local storage for dark mode preference on page load
+if (localStorage.getItem('darkmode') === 'enabled') {
+    document.body.classList.add('darkmode');
+    // Apply dark mode class to specified elements
+    const elements = document.querySelectorAll('.surface, .flagged, .empty, .g, .y, .r, .mine, button, #time, #t, .minimize, .helppopup, .bugpopup');
+    elements.forEach(element => {
+        element.classList.add('darkmode');
+    });
+}
+
+// Initialize button text based on current mode
+updateButtonText();
 
                 // Attach click event listener to each .surface element
                 document.querySelectorAll('.surface').forEach(function(surface) {
